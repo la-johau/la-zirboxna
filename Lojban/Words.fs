@@ -110,14 +110,19 @@
             else go <- false
           if error then None else Some idx
 
-        let y = (classify_str x).ToUpper()
+        let y = (classify_str x)
         if   prefix_match ".v." y then prefix_split 3 x |>  Some
         elif prefix_match ".v'v." y then prefix_split 5 x |>  Some
-        elif (prefix_match ".V" y) || (prefix_match "CV" y)  then 
-          match y.Substring(2) |> vowelscan with
+        elif  prefix_match "Cv." y then prefix_split 3 x |>  Some
+        elif  prefix_match "Cv" y then 
+          match y.Substring(2).ToUpper() |> vowelscan with
           | Some i -> prefix_split (i + 2) x |> Some
           | None -> None
-        elif  prefix_match "Cv." y then prefix_split 3 x |>  Some
+        elif (prefix_match ".V" y) || (prefix_match "CV" y)  then 
+          match y.Substring(2).ToUpper() |> vowelscan with
+          | Some i -> prefix_split (i + 2) x |> Some
+          | None -> None
+        
         elif y.Length = 2 && prefix_match "Cv" y then prefix_split 2 x |>  Some
         elif y.Length = 3 && prefix_match "v'v" y then prefix_split 3 x |>  Some
         elif y.Length = 1 && prefix_match "v" y then prefix_split 1 x |>  Some
@@ -138,57 +143,123 @@
             | None -> false
         if tst x then Some l else None
 
+      let isCmevla (x: string) =
+        let c = classify_str x       
+        (c.EndsWith("C") || c.EndsWith("C.") ) && (c.Contains("?") |> not) && (c.Trim('.').Contains('.') |> not) 
+
+      let isBrivla (x: string) =
+        let c = classify_str x 
+        let c' = c |> String.filter (fun x -> x = 'C' || x = 'V' || x = '?' || x='.')
+        if c'.Length >= 5 then
+          if c'.Substring(0,5).Contains("CC") && c'.EndsWith("V") && (c'.Contains("?") |> not) then
+            true
+          else false
+        else false
+
+      let isFu'ivla x =
+        let c = classify_str x 
+        let c' = c |> String.filter (fun x -> x = 'C' || x = 'V' || x = '?') // || x='.')
+        if c'.Length >= 5 then
+          if c'.Substring(0,5).Contains("CC") && c'.EndsWith("V") && (c'.Contains("?") |> not) && (c.Contains("v") |> not) then
+            true
+          else false
+        else
+          if c'.Contains("CC") && c'.EndsWith("V") && (c'.Contains("?") |> not) && (c.Contains("v") |> not) then
+            true
+          else false
+
+      let fu'ivla_prefix x =
+        if isFu'ivla x then 
+          Some (x, "")
+        elif isBrivla x && x.Contains("y") then
+          let len = x.IndexOf('y')
+          if x.Substring(0,len) |> isFu'ivla then 
+            prefix_split (len+1) x |> Some
+          else
+            None
+        else None
+
+      let cmevla_prefix x =
+        if isCmevla x then 
+          Some (x, "")
+        elif isBrivla x && x.Contains("y") then
+          let len = x.IndexOf('y')
+          if x.Substring(0,len) |> isCmevla then 
+            prefix_split (len+1) x |> Some
+          else
+            None
+        else None
+
       // CCVCV ; CCVC ;: CVC (123) CVC (124) CV'V (12'5) CVV (125) CCV (345) CCV (132)
       // CVCCV ; CVCC ;: CVC (134) CVC (234) CV'V (13'5) CVV (135)  CV'V (23'5) CVV (235) CCV (123)
       // CVC CV'V- CVV- CCV
       // - y, n, r [l for fu'ivla]
       /// identifies the first rafsi_prefix or returns None
       /// rafsi prefix may have a dangling hypen
-      let rec rafsi_prefix (x : string) = // This probably needs work.
-        // checks if the string decomposes into a sequence rafsi
-        // Used for lookahead.
-        let rec check_path (x : string) = 
-          match rafsi_prefix x with
-          | None -> false
-          | Some (_,"") -> true
-          | Some (_,x)  -> check_path x
+      let rafsi_prefix (x : string) = // This probably needs work.
+        let rec check x inCheck =
+          // checks if the string decomposes into a sequence rafsi
+          // Used for lookahead.
+          let rec check_path (x : string) = 
+            match check x true with
+            | None -> false
+            | Some (_,"") -> true
+            | Some (_,x)  -> check_path x
 
-        //terminal refsi
-        if x.Length <= 5 then
-          match classify_str x with
-          | "CVC" -> None
-          | "CV'V" -> Some (x,"")
-          | "CVV" -> Some(x,"")
-          | "CCV" -> Some(x,"")
-          | "CCVC" -> Some(x,"")
-          | "CVCC" -> Some(x,"")
-          | "CCVCV" -> Some(x,"")
-          | "CVCCV" -> Some(x,"")
-          | _ -> None
-        else // nonterminal rafsi
-          let a = x.Substring(0,5)
-          match classify_str a with  // had to sort for priority order in lookahead
-          | "CCVCV"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
-          | "CVCCV"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
-          | "CCVCC"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
-          | "CVCCC"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
+          //terminal refsi
+          if x.Length <= 5 then
+            match classify_str x with
+            | "CVC" -> None
+            | "CV'V" -> Some (x,"")
+            | "CVV" -> Some(x,"")
+            | "CCV" -> Some(x,"")
+            | "CCVC" -> Some(x,"")
+            | "CVCC" -> Some(x,"")
+            | "CCVCV" -> Some(x,"")
+            | "CVCCV" -> Some(x,"")
+            | _ when isFu'ivla x -> Some(x,"")
+            | _ -> None
+          else // nonterminal rafsi
+            let inline test () =
+              let a = x.Substring(0,5)
+              match classify_str a with  // had to sort for priority order in lookahead
+              | "CCV'v" when x.Length > 6 ->
+                let a = x.Substring(0,6)
+                match classify_str a with | "CCV'v'" -> Some(a,x.Substring(6)) | _ -> None
+
+              | "CCVCV"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
+              | "CVCCV"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
+              | "CCVCC"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
+              | "CVCCC"  when check_path(x.Substring(3)) -> Some(a.Substring(0,3),x.Substring(3))
           
-          | "CVVCC" when (a[3] = 'r' || a[3] = 'n') && check_path (x.Substring(4)) ->  Some(x.Substring(0,4),x.Substring(4))   
-          | "CV'VC" when (a[4] = 'r' || a[4] = 'n') && check_path (x.Substring(5)) ->  Some(a,x.Substring(5)) 
+              | "CVVCC" when (a[3] = 'r' || a[3] = 'n') && check_path (x.Substring(4)) ->  Some(x.Substring(0,4),x.Substring(4))   
+              | "CV'VC" when (a[4] = 'r' || a[4] = 'n') && check_path (x.Substring(5)) ->  Some(a,x.Substring(5)) 
 
-          | "CVCCV" when check_path(x.Substring(5)) -> Some(a,x.Substring(5))
+              | "CVCCV" when check_path(x.Substring(5)) -> Some(a,x.Substring(5))
 
-          | "CCVCC" -> Some(x.Substring(0,4),x.Substring(4))
-          | "CCVCV" -> Some(a,x.Substring(5))
-          | "CCVCv" -> Some(a,x.Substring(5))
-          | "CVCCv" -> Some(a,x.Substring(5))
-          | "CVCCC" -> Some(x.Substring(0,4),x.Substring(4))
-          | "CVCvC" -> Some(x.Substring(0,4),x.Substring(4))
-          | "CVVCC" -> Some(x.Substring(0,3),x.Substring(3))
-          | "CVVCV" -> Some(x.Substring(0,3),x.Substring(3))
-          | "CV'VC" -> Some(x.Substring(0,4),x.Substring(4))
-          | _ -> None
+              | "CCVCC" -> Some(x.Substring(0,4),x.Substring(4))
+              | "CCVCV" -> Some(a,x.Substring(5))
+              | "CCVCv" -> Some(a,x.Substring(5))
+              | "CVCCv" -> Some(a,x.Substring(5))
+          
+              | "CVCCC" -> Some(x.Substring(0,4),x.Substring(4))
+              | "CVCvC" -> Some(x.Substring(0,4),x.Substring(4))
+              | "CVVCC" -> Some(x.Substring(0,3),x.Substring(3))
+              | "CVVCV" -> Some(x.Substring(0,3),x.Substring(3))
+              | "CV'VC" -> Some(x.Substring(0,4),x.Substring(4))
+              | _ -> 
+                match fu'ivla_prefix x with
+                | Some (x,y) when check_path y || y="" -> Some (x,y)
+                | _ -> None
+            
+            
+            if not inCheck then
+              match cmevla_prefix x with
+                | Some (x,y) when check_path y -> Some (x,y)
+                | _ -> test()
+            else test()
 
+        check x false
       /// Decomposes string into a List of rafsi or returns None if string contains non-rafsi
       let rafsi_decompose (x : string) =
         let l = System.Collections.Generic.List<_>()
@@ -235,29 +306,21 @@
         | None -> None
 
     let (|Fu'ivla|_|) (x : string) = 
-      let c = classify_str x 
-      let c' = c |> String.filter (fun x -> x = 'C' || x = 'V' || x = '?') // || x='.')
-      if c'.Length >= 5 then
-        if c'.Substring(0,5).Contains("CC") && c'.EndsWith("V") && (c'.Contains("?") |> not) && (c.Contains("v") |> not) then
-          Some x
-        else None
-      else
-        if c'.Contains("CC") && c'.EndsWith("V") && (c'.Contains("?") |> not) && (c.Contains("v") |> not) then
-          Some x
-        else None
+      if isFu'ivla x then Some x else None
 
-    let (|Brivla|_|) (x: string) =
-      let c = classify_str x 
-      let c' = c |> String.filter (fun x -> x = 'C' || x = 'V' || x = '?' || x='.')
-      if c.Length >= 5 then
-        if c'.Substring(0,5).Contains("CC") && c'.EndsWith("V") && (c'.Contains("?") |> not) then
-          Some x
-        else None
-      else None
+    let (|Brivla|_|) x = if isBrivla x then Some x else None
 
     let (|Cmene|_|) (x: string) =
       let c = classify_str x       
       if (c.EndsWith("C") || c.EndsWith("C.") ) && (c.Contains("?") |> not) then Some x else None
+
+    let (|Cmevla|_|) x = if isCmevla x then Some x else None
       
+    let (|Nalojbau|_|) =
+      function
+      | Cmene _ -> None
+      | Brivla _ -> None
+      | Cmavo _ -> None
+      | x -> Some x
   end
 
