@@ -10,16 +10,6 @@ let color_word (a : string) =
   let fg = System.Console.ForegroundColor
   try
     match a with
-    | Words.Cmavo a -> 
-      System.Console.ForegroundColor <- System.ConsoleColor.Cyan
-      let l = match Words.Rules.cmavo_decompose a with Some l -> l | None -> failwith "boom."
-      for i in l do
-        if System.Console.ForegroundColor = System.ConsoleColor.Cyan then
-          System.Console.ForegroundColor <- System.ConsoleColor.DarkCyan
-        else
-          System.Console.ForegroundColor <- System.ConsoleColor.Cyan
-        System.Console.Write(i)
-      System.Console.Write(" ")
     | Words.Gismu a ->
       System.Console.ForegroundColor <- System.ConsoleColor.Green
       System.Console.Write(a)
@@ -41,6 +31,16 @@ let color_word (a : string) =
     | Words.Brivla a -> 
       System.Console.ForegroundColor <- System.ConsoleColor.DarkYellow
       System.Console.Write(a)
+      System.Console.Write(" ")
+    | Words.Cmavo a -> 
+      System.Console.ForegroundColor <- System.ConsoleColor.Cyan
+      let l = match Words.Rules.cmavo_decompose a with Some l -> l | None -> failwith "boom."
+      for i in l do
+        if System.Console.ForegroundColor = System.ConsoleColor.Cyan then
+          System.Console.ForegroundColor <- System.ConsoleColor.DarkCyan
+        else
+          System.Console.ForegroundColor <- System.ConsoleColor.Cyan
+        System.Console.Write(i)
       System.Console.Write(" ")
     | Words.Cmene a -> 
       System.Console.ForegroundColor <- System.ConsoleColor.Blue
