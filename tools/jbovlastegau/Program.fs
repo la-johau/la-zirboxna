@@ -95,6 +95,42 @@ let test_print (filename : string) =
       printfn "%A " v
 
 
+let gloss (filename) (words : #seq<string>) =
+  let t = 
+      conversion.convert_valsi filename 
+      |> Seq.collect snd
+      |> Seq.map (fun i -> System.Collections.Generic.KeyValuePair<_,_>(i.word,i))
+  let table = System.Collections.Generic.Dictionary<_,_>(t,HashIdentity.Structural)
+      
+  seq{
+    for w in words do
+      (
+        let s,v = table.TryGetValue(w.Trim('.'))
+        if s then
+          if v.glosses.Length > 0 then (w,v.glosses[0].word)
+          elif v.selma'o <> "" then (w,v.selma'o)
+          else (w,"????")
+        else (w,"???")
+      )
+  }
+
+let glossout length (words : #seq<string * string>) =
+  let text = System.Text.StringBuilder()
+  let glossing = System.Text.StringBuilder()
+  seq{
+    for (a,b) in words do
+      let len = System.Math.Max(a.Length,b.Length) + 2
+      if text.Length + len >= length then
+        yield (text.ToString(),glossing.ToString())
+        ignore (text.Clear())
+        ignore (glossing.Clear())
+      ignore (text.Append(a.PadRight(len,' ')))
+      ignore (glossing.Append(b.PadRight(len,' ')))
+    if text.Length > 0 then
+      yield (text.ToString(),glossing.ToString())
+  }
+
+
 [<EntryPoint>]
 let main = 
   function
@@ -119,10 +155,27 @@ let main =
         cnt <- cnt + 1
     eprintfn "%i items printed" cnt
     0
+  | x when x.Length > 2 && x[0].ToLower() = "gloss" ->
+    gloss x[1] x[2..] |> Seq.iter (printf "%A ")
+    0
+  | x when x.Length = 2 && x[0].ToLower() = "glosswith" ->
+    let glosser = gloss x[1]
+    let input = System.Console.In.ReadToEnd()
+    for l in input.Split([|"\r\n"; "\r"; "\n"|],System.StringSplitOptions.RemoveEmptyEntries &&& System.StringSplitOptions.TrimEntries) do
+      l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)
+      |> Seq.map (fun i -> i.Trim().ToLower())
+      |> glosser
+      |> glossout System.Console.BufferWidth
+      |> Seq.iter (fun (a,b) -> System.Console.WriteLine(a) ; System.Console.WriteLine(b); System.Console.WriteLine())
+      
+     
+    0
   | x -> 
     eprintfn "Unrecognized : %A" x
     eprintfn "options:"
     eprintfn "  print <xml-file>"
     eprintfn "  convert valsi <xml-file>"
     eprintfn "  convert lookup <xml-file>"
+    eprintfn "  gloss <xml-file> <words>*"
+    eprintfn "  glosswith <xml-file> <words from stdin>"
     1
