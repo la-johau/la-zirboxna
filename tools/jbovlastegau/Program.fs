@@ -95,24 +95,25 @@ let test_print (filename : string) =
       printfn "%A " v
 
 
-let gloss (filename) (words : #seq<string>) =
+let gloss (filename)  =
   let t = 
       conversion.convert_valsi filename 
       |> Seq.collect snd
       |> Seq.map (fun i -> System.Collections.Generic.KeyValuePair<_,_>(i.word,i))
   let table = System.Collections.Generic.Dictionary<_,_>(t,HashIdentity.Structural)
-      
-  seq{
-    for w in words do
-      (
-        let s,v = table.TryGetValue(w.Trim('.'))
-        if s then
-          if v.glosses.Length > 0 then (w,v.glosses[0].word)
-          elif v.selma'o <> "" then (w,v.selma'o)
-          else (w,"????")
-        else (w,"???")
-      )
-  }
+  
+  fun (words : #seq<string>) ->
+    seq{
+      for w in words do
+        (
+          let s,v = table.TryGetValue(w.Trim('.'))
+          if s then
+            if v.glosses.Length > 0 then (w,v.glosses[0].word)
+            elif v.selma'o <> "" then (w,v.selma'o)
+            else (w,"????")
+          else (w,"???")
+        )
+    }
 
 let glossout length (words : #seq<string * string>) =
   let text = System.Text.StringBuilder()
