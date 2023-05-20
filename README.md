@@ -14,5 +14,8 @@ This project is the library that contains modular parsing capabilities.
 ### Lojban_Tests
 This project is a console program to test the functionality of the Lojban library
 
+### Tools
+Directory of projects to process data sources like dictionaries into F# data structures and modules.
+
 #### To run (automatic build)
 `dotnet run`
