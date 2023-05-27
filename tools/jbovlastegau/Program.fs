@@ -16,7 +16,7 @@ module conversion =
               seq{
                 for v in direction.Valsis do
                   {
-                    word = v.Word.String |> Option.defaultValue "" ;
+                    word = (v.Word.String |> Option.defaultValue "").Trim('.') ;
                     definition = v.Definition ;
                     id = v.Definitionid ;
                     glosses = v.Glosswords |> Array.map (fun i -> {word=i.Word.String |> Option.defaultValue ""; sense = i.Sense |> Option.defaultValue ""});
@@ -54,8 +54,56 @@ module conversion =
 
   end
 
+module generate = begin
+  
+  let test (filename : string) =
+
+    let inline gen (i : jbovlaste.valsi) = sprintf "let %s = %s" (i.Word) i.toFsharp
+
+    let dicts = conversion.convert_valsi filename
+
+    for (lang,d) in dicts do
+      printfn "// Generated from XML export of jbovlaste"
+      printfn "module jbovlaste.%s\nopen jbovlaste\n" lang
+
+      let sorts = new System.Collections.Generic.Dictionary<_,_>(HashIdentity.Structural)
+
+      for i in d |> Seq.distinctBy (fun i -> i.Word) do
+        if not <| (i.Word.Contains(" ") || i.Word.Contains(".")) then
+          let k = i.kind.Catagory
+          let s, v = sorts.TryGetValue(k)
+          if not s then sorts[k] <- new System.Collections.Generic.List<_>(Seq.singleton i)
+          else v.Add(i)
+
+      let keypairs = new System.Collections.Generic.List<_>()
+      let modules  = new System.Collections.Generic.List<_>()
+
+      for i in sorts |> Seq.sortBy (fun i -> i.Key) do
+        let modulename = i.Key
+        do modules.Add(modulename)
+        printfn "module %s =" modulename
+        for j in i.Value do
+          System.Console.Write("  "); System.Console.WriteLine(gen j)
+          do keypairs.Add(new System.Collections.Generic.KeyValuePair<_,_>(j.word,j.Word))
+        printfn "\n" // end module
+
+      //// build lookup table
+      printfn "module Lookup ="
+      for m in modules do printfn "  open %s" m
+      printfn "  let inline kp x y = new System.Collections.Generic.KeyValuePair<_,_>(x,y)"
+      printfn "  let s = "
+      printfn "    [| "
+      for i in keypairs do
+        printfn "      (kp \"%s\" %s )" i.Key i.Value
+      printfn "    |]"
+      
+      printfn "  let table = System.Collections.Generic.Dictionary<_,_>(s,HashIdentity.Structural)"
+      printfn "\n" // end module
+end
+
 let test_print (filename : string) = 
   let data = Dictionary.Load(filename)
+
 
   for direction in data.Directions do
     printfn "%s ---> %s :" direction.From direction.To
@@ -171,6 +219,11 @@ let main =
       
      
     0
+
+  | [|a;b|] when a.ToLower() = "genlib" -> 
+    generate.test b
+    0
+
   | x -> 
     eprintfn "Unrecognized : %A" x
     eprintfn "options:"
@@ -179,4 +232,5 @@ let main =
     eprintfn "  convert lookup <xml-file>"
     eprintfn "  gloss <xml-file> <words>*"
     eprintfn "  glosswith <xml-file> <words from stdin>"
+    eprintfn "  genlib <xml-file>"
     1
