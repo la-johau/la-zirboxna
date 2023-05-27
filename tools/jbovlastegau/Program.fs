@@ -101,10 +101,6 @@ module generate = begin
       printfn "  let table = System.Collections.Generic.Dictionary<_,_>(s,HashIdentity.Structural)"
       printfn "\n" // end module
 
-      
-
-      
-
       //// build back lookup table
 
       for (lang,d) in backtrack do
