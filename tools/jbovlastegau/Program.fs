@@ -61,6 +61,7 @@ module generate = begin
     let inline gen (i : jbovlaste.valsi) = sprintf "let %s = %s" (i.Word) i.toFsharp
 
     let dicts = conversion.convert_valsi filename
+    let backtrack = conversion.convert_lookup filename
 
     for (lang,d) in dicts do
       printfn "// Generated from XML export of jbovlaste"
@@ -99,6 +100,30 @@ module generate = begin
       
       printfn "  let table = System.Collections.Generic.Dictionary<_,_>(s,HashIdentity.Structural)"
       printfn "\n" // end module
+
+      
+
+      
+
+      //// build back lookup table
+
+      for (lang,d) in backtrack do
+        printfn "module %s =" lang 
+        printfn "  open Lookup"
+        
+        printfn "  let inline kp x y = new System.Collections.Generic.KeyValuePair<_,_>(x,y)"
+        printfn "  let inline mapper (x : jbovlaste.lookup) = let s,v = table.TryGetValue(x.valsi) in if s then Some (kp x.word (v,x)) else None"
+
+        printfn "  let s = "
+        printfn "    [| "
+        for i in d |> Seq.distinctBy (fun i -> i.word) |> Seq.sortBy (fun i->i.word) do
+          printfn "      %s" i.toFsharp
+        printfn "    |] "
+        printfn "  let t = s |> Seq.choose mapper "
+        printfn "  let table = System.Collections.Generic.Dictionary<_,_>(t,HashIdentity.Structural)"
+        printfn "\n" // end module
+
+
 end
 
 let test_print (filename : string) = 

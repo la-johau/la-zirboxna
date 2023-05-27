@@ -115,3 +115,11 @@ namespace jbovlaste
     sense : string
     place : int option
   }
+    with
+      member self.toFsharp
+        with get () =
+           sprintf "{word=%s; valsi= %s; sense= %s; place=%s}"
+            (quote self.word)
+            (quote self.valsi)
+            (quote self.sense)
+            (match self.place with None -> "None" | Some x -> sprintf "Some (%i)" x)
