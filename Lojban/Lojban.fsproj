@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="jbovlaste.fs" />
+    <Compile Include="jbovlaster-en.fs" />
+    <Compile Include="jbovlaster-en-rafsi.fs" />
     <Compile Include="Words.fs" />
   </ItemGroup>
 

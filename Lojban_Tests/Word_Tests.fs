@@ -1,6 +1,7 @@
 ﻿module Word_Tests
 
 open Lojban
+open jbovlaste
 
 /// colors a word by it's lexer type.
 let color_word (a : string) =
@@ -77,12 +78,20 @@ let rec deconstruct (x : string) =
   if x.Length > 0 then
     match Words.Rules.rafsi_prefix x with
     | Some (a,b) -> 
-      printfn "%s : %s" a b
+      match rafsi.lookup a with
+        | Some v ->
+          printfn "%s (%s) :: %s" a v.Gloss b
+        | _ ->
+          printfn "%s :: %s" a b
       deconstruct b
     | None ->
       match Words.Rules.cmavo_prefix x with
       | Some (a,b) ->
-        printfn "%s :: %s" a b
+        match rafsi.lookup a with
+        | Some v ->
+          printfn "%s (%s) :: %s" a v.Gloss b
+        | _ ->
+          printfn "%s :: %s" a b
         deconstruct b
       | None ->
         eprintfn "Not a rafsi or cmavo"

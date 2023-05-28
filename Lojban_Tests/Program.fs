@@ -33,6 +33,14 @@ let main =
     Word_Tests.check_dictionary x.FullName true
     0
 
+  | Commands.Keyword ("gloss", Args.FileExists (x,[])) ->
+    glossing.glossconsole x 
+    0
+
+  | Commands.Keyword ("lookup", x :: []) ->
+    glossing.lookup x 
+    0
+
   | x -> 
     eprintfn "Saw: %A" x
     eprintfn "commands:"
@@ -44,6 +52,10 @@ let main =
     eprintfn "\t\trasfi deconstruction via prefix matching"
     eprintfn "\texe checkdict <json file from la sutysisku>"
     eprintfn "\t\tLoads json file in a format as defined by la sutysisku and tests the type checking of the dictionary entries.  Outputs words that are inconsistant with stated type."
+    eprintfn "\texe gloss <filename>"
+    eprintfn "\t\tLoads files and pretty prints it with undertext glossing."
+    eprintfn "\texe lookup <word>"
+    eprintfn "\t\tfinds definition of word"
     1
 
 
