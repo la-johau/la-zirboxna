@@ -113,7 +113,7 @@ let gloss () =
             let subs = decompose w |> Array.ofSeq
             if subs.Length = 0 then (w,"???")
             else
-              (w, String.concat "-" subs)
+              (w, String.concat "_" subs)
 
         )
     }
