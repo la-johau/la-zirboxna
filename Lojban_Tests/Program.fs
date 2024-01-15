@@ -41,6 +41,15 @@ let main =
     glossing.lookup x 
     0
 
+  | Commands.Keyword ("wordcount", Args.FileExists (x,[])) ->
+    glossing.wordcount x
+    0
+
+  | Commands.Keyword ("studyguide", Args.FileExists (x,[])) ->
+    glossing.studyguide x
+    0
+
+
   | x -> 
     eprintfn "Saw: %A" x
     eprintfn "commands:"
@@ -54,6 +63,10 @@ let main =
     eprintfn "\t\tLoads json file in a format as defined by la sutysisku and tests the type checking of the dictionary entries.  Outputs words that are inconsistant with stated type."
     eprintfn "\texe gloss <filename>"
     eprintfn "\t\tLoads files and pretty prints it with undertext glossing."
+    eprintfn "\texe studyguide <filename>"
+    eprintfn "\t\tLoads files and pretty prints a study guide based of frequent usage."
+    eprintfn "\texe wordcount <filename>"
+    eprintfn "\t\tLoads files and prints unique word count."
     eprintfn "\texe lookup <word>"
     eprintfn "\t\tfinds definition of word"
     1

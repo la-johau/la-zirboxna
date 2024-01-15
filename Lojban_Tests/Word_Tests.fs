@@ -80,7 +80,7 @@ let rec deconstruct (x : string) =
     | Some (a,b) -> 
       match rafsi.lookup a with
         | Some v ->
-          printfn "%s (%s) :: %s" a v.Gloss b
+          printfn "%s (%s) :: %s // %s" a v.Gloss b v.definition
         | _ ->
           printfn "%s :: %s" a b
       deconstruct b

@@ -17,10 +17,18 @@ let tablepick x =
   else None
 
 let lookup (x : string) = 
-  let e = System.Math.Min(5,x.Length)
+  let prefix = 
+    let e = System.Math.Min(5,x.Length)
 
-  seq{for i in 2..(e-1) do yield x[0..i]}
-  |> Seq.tryPick tablepick
+    seq{for i in 2..(e-1) do yield x[0..i]}
+    |> Seq.tryPick tablepick
+
+
+  //eprintfn "%s : %i" x x.Length
+  if x.Length = 5 then
+    let s,v = jbovlaste.lojban.lojban.table.TryGetValue(x)
+    if s then Some (fst v) else prefix
+  else prefix
 
   
   //result

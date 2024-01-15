@@ -16,7 +16,12 @@ let private rafsi (w : string) =
   |> jbovlaste.rafsi.lookup 
   |> (
       function 
-      Some v -> (w, Some v)
+      | Some v when w.Length = 5 ->
+        let s,v' = table.TryGetValue(w')
+        if s then 
+          (w, Some v')
+        else (w, Some v)
+      | Some v -> (w, Some v)
       | _ ->
         let s,v = table.TryGetValue(w')
         if s then
@@ -25,9 +30,7 @@ let private rafsi (w : string) =
           (w, None)
   )
 
-let lookup (w : string) =
-  
-  let decompose (x : string) =
+let decompose (x : string) =
     seq{
       match x with
       | Words.Cmavo _ ->
@@ -43,14 +46,16 @@ let lookup (w : string) =
       | x -> 
         yield (x, None)
     }
+
+let lookup (w : string) =
   
   let w' = w.Trim('.')
   let s,v = table.TryGetValue(w')
   if s then
-    printfn "%s" v.definition
+    printfn "%A" (v.definition, v.Gloss)
   else
     for (w,v) in decompose w do
-      printfn "%s : %s" w (match v with Some i -> i.definition | _ -> "???")
+      printfn "%s : %A" w (match v with Some i -> (i.definition, i.Gloss) | _ -> ("???", "???"))
 
     //if subs.Length = 0 then (w,"???")
     //else
@@ -64,7 +69,11 @@ let gloss () =
     let s,v = table.TryGetValue(w.Trim('.'))
     if s then
       let t = v.Gloss
-      if t.Length > 0 then t else "!???!"
+      if t.Length > 0 then t 
+      else match v.kind with
+           | jbovlaste.Cmevla -> sprintf "\"%s\"" w
+           | jbovlaste.Cmene  -> sprintf "\"%s\"" w
+           | v -> sprintf "%s{}" v.toFsharp
     else
       "???"
   
@@ -73,8 +82,14 @@ let gloss () =
     w' 
     |> jbovlaste.rafsi.lookup 
     |> (
-        function 
-        Some v -> v.Gloss 
+        function
+        | Some v when w.Length = 5 ->
+          let s,v' = table.TryGetValue(w')
+          if s then 
+            v'.Gloss
+          else 
+            v.Gloss
+        | Some v -> v.Gloss 
         | _ ->
           let s,v = table.TryGetValue(w')
           if s then
@@ -107,8 +122,7 @@ let gloss () =
           let w' = w.Trim('.')
           let s,v = table.TryGetValue(w')
           if s then
-            let t = v.Gloss
-            (w, if t.Length > 0 then t else "!???!")
+            (w, simple w')
           else
             let subs = decompose w |> Array.ofSeq
             if subs.Length = 0 then (w,"???")
@@ -147,4 +161,31 @@ let glossconsole (x : System.IO.FileInfo) =
     |> gloss ()
     |> glossout System.Console.BufferWidth
     |> Seq.iter (fun (a,b) -> System.Console.WriteLine(a) ; System.Console.WriteLine(b); System.Console.WriteLine())
+
+let wordcount (x : System.IO.FileInfo) =
+  let count = 
+    seq{ for l in System.IO.File.ReadAllLines(x.FullName) do yield! l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)}
+    |> Seq.map (fun i -> i.Trim().ToLower())
+    |> gloss ()
+    |> Seq.distinctBy fst
+    |> Seq.length
+  printfn "Unique Words: %i" count
+
+let studyguide (x : System.IO.FileInfo) =
+  let guide =
+    seq{ for l in System.IO.File.ReadAllLines(x.FullName) do yield! l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)}
+    |> Seq.map (fun i -> i.Trim().ToLower())
+    |> gloss ()
+    |> Seq.countBy fst
+    |> Seq.sortByDescending snd
+    
+  for (word, count) in guide do
+    printfn "%s : %i" word count
+    do lookup word
+
+
+
+
+    
+
 

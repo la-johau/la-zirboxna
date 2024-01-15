@@ -271,6 +271,9 @@
         if check_path x then Some l else None 
 
       // https://lojban.github.io/cll/4/7/ for fu'ivla
+
+      let isCmene x = isCmevla x
+        
     end
 
     open Rules
@@ -280,12 +283,14 @@
     // Rules based on the CLL chapter 4
     
     let (|Cmavo|_|) (x : string) = 
-      match cmavo_decompose x with
-      | Some _ -> Some x
-      | None ->
-        match cmavo_decompose (x.TrimEnd('.')) with
-        | Some _ -> Some (x.TrimEnd('.'))
-        | None -> None
+      if isCmene x then None
+      else
+        match cmavo_decompose x with
+        | Some _ -> Some x
+        | None ->
+          match cmavo_decompose (x.TrimEnd('.')) with
+          | Some _ -> Some (x.TrimEnd('.'))
+          | None -> None
 
 
     let (|Gismu|_|) (x : string) = 
@@ -298,15 +303,17 @@
       else None
 
     let (|Lujvo|_|) (x : string) = 
-      match rafsi_decompose x with
-      | Some _ -> Some x
-      | None -> 
-        match rafsi_decompose (x.TrimEnd('.')) with
-        | Some _ -> Some (x.TrimEnd('.'))
-        | None -> None
+      if isCmene x then None
+      else
+        match rafsi_decompose x with
+        | Some _ -> Some x
+        | None -> 
+          match rafsi_decompose (x.TrimEnd('.')) with
+          | Some _ -> Some (x.TrimEnd('.'))
+          | None -> None
 
     let (|Fu'ivla|_|) (x : string) = 
-      if isFu'ivla x then Some x else None
+      if isFu'ivla x && (isCmene x |> not) then Some x else None
 
     let (|Brivla|_|) x = if isBrivla x then Some x else None
 
