@@ -9,6 +9,18 @@ let private simple (w :string) =
   if s then Some v
   else None
 
+let private toKind (w : string) =
+  match simple w with
+  | Some v -> v.kind
+  | None ->
+    match w with
+    | Words.Cmavo _ -> jbovlaste.Cmavo
+    | Words.Lujvo _ -> jbovlaste.Lujvo
+    | Words.Fu'ivla _ -> jbovlaste.Fu'ivla
+    | Words.Cmene _ -> jbovlaste.Cmene
+    | Words.Cmevla _ -> jbovlaste.Cmevla
+    | Words.Gismu _ -> jbovlaste.Gismu
+    | _ -> jbovlaste.Other "Forign"
 
 let private rafsi (w : string) = 
   let w' = w.Trim('.')
@@ -41,25 +53,36 @@ let decompose (x : string) =
         match Words.Rules.rafsi_decompose x with
         | Some x -> yield! (x |> Seq.map rafsi)
         | None -> ()
-      | Words.Cmene _ ->
-        yield (x,None)
+      | Words.Cmene y ->
+        yield (y, (jbovlaste.valsi.FromCmene y))
       | x -> 
         yield (x, None)
     }
 
-let lookup (w : string) =
-  
+let lookups (w :string) =
   let w' = w.Trim('.')
   let s,v = table.TryGetValue(w')
-  if s then
-    printfn "%A" (v.definition, v.Gloss)
+  if s then (w',Some v) |> Seq.singleton
   else
-    for (w,v) in decompose w do
-      printfn "%s : %A" w (match v with Some i -> (i.definition, i.Gloss) | _ -> ("???", "???"))
+    decompose w
 
-    //if subs.Length = 0 then (w,"???")
-    //else
-    //  (w, String.concat "-" subs)
+let lookup (w : string) =
+  for (w,v) in lookups w do
+    match v with
+    | Some v -> printfn "%s:\n%A" w v
+    | None -> printfn "%s : No defintion." w
+  
+  //let w' = w.Trim('.')
+  //let s,v = table.TryGetValue(w')
+  //if s then
+  //  printfn "%A" (v.definition, v.Gloss)
+  //else
+  //  for (w,v) in decompose w do
+  //    printfn "%s : %A" w (match v with Some i -> (i.definition, i.Gloss) | _ -> ("???", "???"))
+
+  //  //if subs.Length = 0 then (w,"???")
+  //  //else
+  //  //  (w, String.concat "-" subs)
 
 
 
@@ -148,6 +171,15 @@ let glossout length (words : #seq<string * string>) =
       yield (text.ToString(),glossing.ToString())
   }
 
+
+let wordtrim (x : string) =
+  try
+    let x = x.ToLowerInvariant()
+    let start =  x.IndexOfAny(Lojban.Words.Rules.alpha.ToCharArray())
+    let stop  =  x.LastIndexOfAny(Lojban.Words.Rules.alpha.ToCharArray())
+    x.Substring(start, System.Math.Max(1+stop-start,0)) |> Some
+  with | _ -> None
+
 let glossconsole (x : System.IO.FileInfo) =
   //eprintfn "Glossing : %s" x.FullName
   
@@ -157,7 +189,7 @@ let glossconsole (x : System.IO.FileInfo) =
     let w = l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)
     //eprintfn "Words on line: %i" w.Length
     w
-    |> Seq.map (fun i -> i.Trim().ToLower())
+    |> Seq.choose wordtrim
     |> gloss ()
     |> glossout System.Console.BufferWidth
     |> Seq.iter (fun (a,b) -> System.Console.WriteLine(a) ; System.Console.WriteLine(b); System.Console.WriteLine())
@@ -165,7 +197,7 @@ let glossconsole (x : System.IO.FileInfo) =
 let wordcount (x : System.IO.FileInfo) =
   let count = 
     seq{ for l in System.IO.File.ReadAllLines(x.FullName) do yield! l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)}
-    |> Seq.map (fun i -> i.Trim().ToLower())
+    |> Seq.choose wordtrim
     |> gloss ()
     |> Seq.distinctBy fst
     |> Seq.length
@@ -174,14 +206,17 @@ let wordcount (x : System.IO.FileInfo) =
 let studyguide (x : System.IO.FileInfo) =
   let guide =
     seq{ for l in System.IO.File.ReadAllLines(x.FullName) do yield! l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)}
-    |> Seq.map (fun i -> i.Trim().ToLower())
-    |> gloss ()
-    |> Seq.countBy fst
+    |> Seq.choose wordtrim
+    |> Seq.countBy id
     |> Seq.sortByDescending snd
+    |> Seq.groupBy (fun i -> i |> fst |> toKind)
+    |> Seq.filter (fun (i,_) -> match i with |jbovlaste.Other _ -> false | _ -> true)
     
-  for (word, count) in guide do
-    printfn "%s : %i" word count
-    do lookup word
+  for kind, group in guide do
+    printfn "%A :" kind
+    for (word,count) in group |> Seq.sortBy fst do
+      printfn "%s : %i" word count
+      do lookup word
 
 
 

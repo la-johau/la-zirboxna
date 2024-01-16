@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Words.fs" />
     <Compile Include="jbovlaste.fs" />
     <Compile Include="jbovlaster-en.fs" />
     <Compile Include="jbovlaster-en-rafsi.fs" />
-    <Compile Include="Words.fs" />
   </ItemGroup>
 
 </Project>

@@ -64,6 +64,9 @@ namespace jbovlaste
             (self.rafsi |> Seq.map quote |> String.concat "; ")
             (quote self.selma'o)
             self.kind.toFsharp
+      static member FromCmene (x : string) =
+        if Lojban.Words.Rules.isCmene x then Some {word=x; definition=x; id= -1; glosses=[||]; keywords=[||];notes="";rafsi=[||];selma'o="";kind= Cmene}
+        else None
 
   and gloss = {
     word : string
