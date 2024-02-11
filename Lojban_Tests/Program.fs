@@ -37,6 +37,10 @@ let main =
     glossing.glossconsole x 
     0
 
+  | Commands.Keyword ("gloss", x) ->
+    x |> String.concat " " |> glossing.glosstext  
+    0
+
   | Commands.Keyword ("lookup", x :: []) ->
     glossing.lookup x 
     0

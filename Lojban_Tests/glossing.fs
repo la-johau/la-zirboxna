@@ -194,6 +194,20 @@ let glossconsole (x : System.IO.FileInfo) =
     |> glossout System.Console.BufferWidth
     |> Seq.iter (fun (a,b) -> System.Console.WriteLine(a) ; System.Console.WriteLine(b); System.Console.WriteLine())
 
+let glosstext (x : string) =
+  //eprintfn "Glossing : %s" x.FullName
+  
+  let lines = Array.singleton x //input.Split([|"\r\n"; "\r"; "\n"|],System.StringSplitOptions.RemoveEmptyEntries &&& System.StringSplitOptions.TrimEntries)
+  //eprintfn "Lines in file : %i" lines.Length
+  for l in lines do
+    let w = l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)
+    //eprintfn "Words on line: %i" w.Length
+    w
+    |> Seq.choose wordtrim
+    |> gloss ()
+    |> glossout System.Console.BufferWidth
+    |> Seq.iter (fun (a,b) -> System.Console.WriteLine(a) ; System.Console.WriteLine(b); System.Console.WriteLine())
+
 let wordcount (x : System.IO.FileInfo) =
   let count = 
     seq{ for l in System.IO.File.ReadAllLines(x.FullName) do yield! l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)}
