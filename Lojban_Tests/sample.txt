@@ -1,0 +1,141 @@
+verse  1    
+kid    ???  
+
+bu'u  la          jbogu'e      ro    le             prenu   roroi   darlu  su'o  da           
+at    that named  Lojbanistan  each  the described  people  always  argue  some  something 1  
+
+.i             .ue       zo            bu'u  .oi        .i             xu            do   puzi  cusku  ta          
+sentence link  surprise  1-word quote  at    complaint  sentence link  true-false ?  you  just  say    that there  
+
+.i             .y          zo            ta          na             mapti  .i             zo            di'u            cu                jai               drani    le'o        sai             
+sentence link  hesitation  1-word quote  that there  bridi negator  fit    sentence link  1-word quote  last utterance  selbri separator  modal conversion  correct  aggressive  strong emotion  
+
+.i             .ia     nadme'a    fa               la          .itku'ile  .a'enai     
+sentence link  belief  hard-less  1st sumti place  that named  Illaksh    exhaustion  
+
+(chris  atherton:  i've  got    nothing  to                 do   with  lojban!!)  
+???     ???        ???   "got"  ???      start parenthesis  you  ???   ???        
+
+.i             mi  roroi   djica   lonu          bacru  su'o  sampu   melbi     vau               
+sentence link  I   always  desire  the event of  utter  some  simple  gorgeous  end simple bridi  
+
+.i             ku'i  lo   mi  pemci  za'o   xlodu'uxukau  
+sentence link  but   the  I   poem   still  verbose       
+
+.i             fusra   fa               lo   plise  poi                 se              citka  lo   pavjima  bu'u  ti         
+sentence link  rotten  1st sumti place  the  apple  restrictive clause  2nd conversion  eat    the  unicorn  at    this here  
+
+.ije          mi  do'e            lo   se              besto  .oi        cu                mo'ifli           
+sentence and  I   unspecif modal  the  2nd conversion  !???!  complaint  selbri separator  fail to remember  
+
+chorus  
+???     
+
+.i             ko          na             xekce  mi  doi              dirba  
+sentence link  imperative  bridi negator  xekce  I   vocative marker  dear   
+
+.i             ko          na             xekce  mi  
+sentence link  imperative  bridi negator  xekce  I   
+
+.i             ko          na             xekce  mi  doi              dirba  
+sentence link  imperative  bridi negator  xekce  I   vocative marker  dear   
+
+.i             ko          na             xekce  mi  
+sentence link  imperative  bridi negator  xekce  I   
+
+.i             ko          na             xekce  mi  doi              dirba  
+sentence link  imperative  bridi negator  xekce  I   vocative marker  dear   
+
+.i             ko          na             xekce  mi  
+sentence link  imperative  bridi negator  xekce  I   
+
+.i             ko          na             xekce  mi  doi              dirba  
+sentence link  imperative  bridi negator  xekce  I   vocative marker  dear   
+
+.i             ko          na             xekce  mi  
+sentence link  imperative  bridi negator  xekce  I   
+
+(nick  nicholas:  .i             do   pilno  ro    loi                 mabla   cnino  .i             mi  na'e             ka'e  fraxu)  
+???    ???        sentence link  you  use    each  the mass really is  bloody  new    sentence link  I   scalar contrary  can   ???     
+
+(goran  topic:  mi  na             pilno  ro    loi                 mabla   cnino  .i             mi  na             go'i)  
+???     ???     I   bridi negator  use    each  the mass really is  bloody  new    sentence link  I   bridi negator  ???    
+
+(chris  atherton:  are  you  talking         about    me,  nick?)  
+???     ???        ???  ???  challenge-film  "about"  ???  ???     
+
+(nick  nicholas:  no,  i'm    saying    stop      using    all    these  bloody  grammatical    innovations!)  
+???    ???        ???  "i'm"  "saying"  constant  "using"  "all"  ???    ???     "grammatical"  ???            
+
+verse  2    
+kid    ???  
+
+.i             xu            da           do   prali  lonu          sanga  le             do   zgike  va'o              lo   
+sentence link  true-false ?  something 1  you  gain   the event of  sing   the described  you  music  under conditions  the  
+
+nu              le             tertigni                na             se              vajni      co               tinju'i  do   
+event abstract  the described  3rd conversion-perform  bridi negator  2nd conversion  important  tanru inversion  listen   you  
+
+.i             le             vi    prane  bergu  co               narplixau  zo'u        ca  lo   da'i   nu              
+sentence link  the described  here  ideal  north  tanru inversion  useless    end prenex  as  the  would  event abstract  
+
+no  jmive  prenu   cu                jboselbau       kei              do   surla  xu            
+0   live   people  selbri separator  Lojban speaker  end abstraction  you  rest   true-false ?  
+
+chorus  
+???     
+
+bridge           
+predicate-<dge>  
+
+.i             lo   xekcedi  cu                fanza  .i             
+sentence link  the  !???!    selbri separator  annoy  sentence link  
+
+lonu          me               mi  na             se              curmi  
+the event of  sumti to selbri  I   bridi negator  2nd conversion  let    
+
+.i             pante    ra'a             mi  vi    lo   se              .irci  
+sentence link  protest  pertained to by  I   here  the  2nd conversion  IRC    
+
+.ije          ku'i  noda            snogau   mi  
+sentence and  but   nothing at all  slow-do  I   
+
+i              mi  cazi       tatpi  sai             
+sentence link  I   right now  tired  strong emotion  
+
+.i             mi  tatpi  tatpi  sai             
+sentence link  I   tired  tired  strong emotion  
+
+.i             mi  cazi       
+sentence link  I   right now  
+
+sa               
+erase utterance  
+
+verse  3    
+kid    ???  
+
+.i             ca  lenu                   lo   lobypli       cu                damba  vi    le             barda  tcadu  kei              
+sentence link  as  the specific event of  the  Lojbanic-use  selbri separator  fight  here  the described  big    city   end abstraction  
+
+cu'u        lo   prije  lo   mi  jufra     cu                .ai     banli  zmadu  .ei   
+as said by  the  wise   the  I   sentence  selbri separator  intent  great  more   must  
+
+.i             tanjelavi               .i             mi  co'u       troci  lonu          fagysti   
+sentence link  There ain't no justice  sentence link  I   cessative  try    the event of  fire-end  
+
+.i             doi              jbope'o          pa  da           po'o      cu                se              cusku  mi  
+sentence link  vocative marker  Lojbanic friend  1   something 1  uniquely  selbri separator  2nd conversion  say    I   
+
+rea       tu           
+rea[???]  that yonder  
+
+mi  no  ga       hirti  iu    
+I   0   fore or  ???    love  
+
+uo       no  ue.       i              buo       fa               gu            
+finally  0   surprise  sentence link  buo[???]  1st sumti place  fore whether  
+
+tu           cia       kinci  miu       
+that yonder  cia[???]  film   miu[???]  
+

@@ -197,7 +197,7 @@ let glossconsole (x : System.IO.FileInfo) =
 let glosstext (x : string) =
   //eprintfn "Glossing : %s" x.FullName
   
-  let lines = Array.singleton x //input.Split([|"\r\n"; "\r"; "\n"|],System.StringSplitOptions.RemoveEmptyEntries &&& System.StringSplitOptions.TrimEntries)
+  let lines = x.Split([|"\r\n"; "\r"; "\n"|],System.StringSplitOptions.RemoveEmptyEntries &&& System.StringSplitOptions.TrimEntries)
   //eprintfn "Lines in file : %i" lines.Length
   for l in lines do
     let w = l.Split(" ",System.StringSplitOptions.RemoveEmptyEntries)
